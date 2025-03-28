@@ -1,0 +1,17 @@
+
+# Ignore vendor directory
+/vendor/
+
+# Ignore uploads (user uploaded images)
+/uploads/
+
+# Ignore environment files
+.env
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore IDE and editor folders
+.vscode/
+.idea/
