@@ -10,7 +10,7 @@ if (!$db) {
 }
 require_once 'classes/Product.php';
 $product = new Product($db);
-$limit = 6; // 每页显示的产品数
+$limit = 6; // Limit product list count
 $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 
