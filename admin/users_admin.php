@@ -41,8 +41,9 @@ $users = $user->getAllUsers();
           <td><?= htmlspecialchars($u['email']) ?></td>
           <td><?= $u['is_admin'] ? 'Yes' : 'No' ?></td>
           <td>
+            <a href="users_admin_details.php?Id=<?= $u['id'] ?>" class="btn btn-success btn-sm">Edit</a>
             <a href="?delete=<?= $u['id'] ?>" class="btn btn-danger btn-sm"
-              onclick="return confirm('Delete this user?')">Delete</a>
+              onclick="return confirm('Are you sure to delete this user?')">Delete</a>
           </td>
         </tr>
       <?php endforeach; ?>

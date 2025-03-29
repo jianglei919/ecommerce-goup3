@@ -1,5 +1,6 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) session_start();
+if (session_status() === PHP_SESSION_NONE) 
+  session_start();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -21,13 +22,13 @@ if (session_status() === PHP_SESSION_NONE) session_start();
             </li>
             <?php if ($_SESSION['user']['is_admin']): ?>
               <li class="nav-item">
-                <a class="nav-link text-white" href="products_admin.php">Products</a>
+                <a class="nav-link text-white" href="products_admin.php"><i class="bi bi-card-checklist"></i> Products</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link text-white" href="orders_admin.php">Orders</a>
+                <a class="nav-link text-white" href="orders_admin.php"><i class="bi bi-bag"></i> Orders</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link text-white" href="users_admin.php">Users</a>
+                <a class="nav-link text-white" href="users_admin.php"><i class="bi bi-person-lines-fill"></i> Users</a>
               </li>
             <?php endif; ?>
             <li class="nav-item">
@@ -36,6 +37,11 @@ if (session_status() === PHP_SESSION_NONE) session_start();
               </a>
             </li>
             <?php if (!$_SESSION['user']['is_admin']): ?>
+              <li class="nav-item">
+                <a class="nav-link text-white" href="index.php">
+                  <i class="bi bi-shop-window"></i> Shop
+                </a>
+              </li>
               <li class="nav-item">
                 <a class="nav-link text-white" href="cart_view.php">
                   <i class="bi bi-cart"></i> Cart
@@ -47,10 +53,10 @@ if (session_status() === PHP_SESSION_NONE) session_start();
             <?php endif; ?>
           <?php else: ?>
             <li class="nav-item">
-              <a class="nav-link text-white" href="login.php">Login</a>
+              <a class="nav-link text-white" href="login.php"><i class="bi bi-box-arrow-in-right"></i> Login</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link text-white" href="register.php">Register</a>
+              <a class="nav-link text-white" href="register.php"><i class="bi bi-person-check"></i> Register</a>
             </li>
           <?php endif; ?>
         </ul>

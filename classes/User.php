@@ -27,7 +27,8 @@ class User
     $result = $stmt->get_result();
     $user = $result->fetch_assoc();
 
-    if ($user && password_verify($password, $user['password'])) {
+    if ($user && password_verify($password, $user['password'])) 
+    {
       return $user;
     }
     return false;
@@ -41,6 +42,30 @@ class User
       $users[] = $row;
     }
     return $users;
+  }
+
+  public function getUser($userId)
+  {
+    $query = "SELECT * FROM users WHERE Id = ?";
+    $stmt = $this->conn->prepare($query);
+    $stmt->bind_param("s", $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = null;
+
+    if ($result->num_rows > 0) {
+    $user = $result->fetch_assoc();
+    } else {
+        die("User not found");
+    }
+    return $user;
+  }
+
+  public function updateAdminStatus($userId, $isadmin)
+  {
+    $stmt =  $this->conn->prepare("UPDATE users SET is_admin = ? WHERE id = ?");
+    $stmt->bind_param("ii", $isadmin, $userId);
+    return $stmt->execute();
   }
 
   public function deleteUser($id)
