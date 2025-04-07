@@ -41,7 +41,13 @@ $total = 0;
             <?php endforeach; ?>
         </tbody>
     </table>
-    <h4>Total: $<?= number_format($total, 2) ?></h4>
+    <?php
+      $hst = $total * 0.13;
+      $grand_total = $total + $hst;
+    ?>
+    <h5>Subtotal: $<?= number_format($total, 2) ?></h5>
+    <h5>HST (13%): $<?= number_format($hst, 2) ?></h5>
+    <h4>Total: $<?= number_format($grand_total, 2) ?></h4>
     <div class="d-flex justify-content-end mt-auto">
       <div>
         <a href="checkout.php" class="btn btn-success">Checkout</a>

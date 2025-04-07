@@ -39,7 +39,7 @@ $result = $db->query($sql);
                     <td><?= htmlspecialchars($row['customer_name']) ?></td>
                     <td>$<?= number_format($row['total'], 2) ?></td>
                     <td><?= $row['created_at'] ?></td>
-                    <td><a href="order_details.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-primary">View</a></td>
+                    <td><a href="order_admin_details.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-primary">View</a></td>
                 </tr>
             <?php endwhile; ?>
         </tbody>

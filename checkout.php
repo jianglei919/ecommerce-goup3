@@ -17,6 +17,8 @@ foreach ($cart as $id => $qty) {
     $p = $product->getProduct($id);
     $total += $p['price'] * $qty;
 }
+$hst = $total * 0.13;
+$grand_total = $total + $hst;
 
 $errors = [];
 
@@ -53,12 +55,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // Insert into orders_payment
             $stmt = $db->prepare("INSERT INTO orders_payment (user_id, fullname, phone, address, city, postal, payment, card, expiry, cvv, note, total, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
-            $stmt->bind_param("isssssssssds", $userId, $fullname, $phone, $address, $city, $postal, $payment, $card, $expiry, $cvv, $note, $total);
+            $stmt->bind_param("isssssssssds", $userId, $fullname, $phone, $address, $city, $postal, $payment, $card, $expiry, $cvv, $note, $grand_total);
             $stmt->execute();
 
             // Insert into orders
             $stmt = $db->prepare("INSERT INTO orders (user_id, total, created_at) VALUES (?, ?, NOW())");
-            $stmt->bind_param("id", $userId, $total);
+            $stmt->bind_param("id", $userId, $grand_total);
             $stmt->execute();
             $order_id = $stmt->insert_id;
 
@@ -109,11 +111,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             $pdf->SetFont('Arial', 'B', 12);
-            $pdf->Cell(120, 10, 'Total', 1);
+            $pdf->Cell(120, 10, 'Subtotal', 1);
             $pdf->Cell(40, 10, '$' . number_format($total, 2), 1, 0, 'R');
+            $pdf->Ln();
+            $pdf->Cell(120, 10, 'HST (13%)', 1);
+            $pdf->Cell(40, 10, '$' . number_format($hst, 2), 1, 0, 'R');
+            $pdf->Ln();
+            $pdf->Cell(120, 10, 'Total', 1);
+            $pdf->Cell(40, 10, '$' . number_format($grand_total, 2), 1, 0, 'R');
             $pdf->Ln(20);
             $pdf->SetFont('Arial', '', 12);
             $pdf->Cell(0, 10, 'Thank you for your order!', 0, 1);
+            $pdf->Cell(0, 10, 'You can return to our website to continue shopping.', 0, 1);
 
             unset($_SESSION['cart']);
             $pdf->Output("I", "invoice.pdf");
@@ -186,7 +195,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <textarea class="form-control" name="note" id="note" rows="2"></textarea>
         </div>
         <div class="mb-3">
-            <strong>Total: $<?= number_format($total, 2) ?></strong>
+            <strong>Subtotal: $<?= number_format($total, 2) ?></strong><br>
+            <strong>HST (13%): $<?= number_format($hst, 2) ?></strong><br>
+            <strong>Total: $<?= number_format($grand_total, 2) ?></strong>
         </div>
         <button type="submit" class="btn btn-success w-100">Place Order</button>
     </form>

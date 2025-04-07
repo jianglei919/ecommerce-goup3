@@ -13,7 +13,9 @@ if (session_status() === PHP_SESSION_NONE)
 <body>
   <nav class="navbar navbar-expand-lg navbar-light bg-primary text-white mb-4">
     <div class="container">
-      <a class="navbar-brand text-white" href="index.php">E-Commerce-Group3</a>
+      <a class="navbar-brand text-white" href="<?= strpos($_SERVER['PHP_SELF'], '/admin/') !== false ? '../index.php' : 'index.php' ?>">
+        E-Commerce-Group3
+      </a>
       <div class="collapse navbar-collapse">
         <ul class="navbar-nav ms-auto">
           <?php if (isset($_SESSION['user'])): ?>
@@ -32,7 +34,7 @@ if (session_status() === PHP_SESSION_NONE)
               </li>
             <?php endif; ?>
             <li class="nav-item">
-              <a class="nav-link text-white" href="<?= (isset($_SESSION['user']) && $_SESSION['user']['is_admin']) ? '../logout.php' : 'logout.php' ?>">
+              <a class="nav-link text-white" href="<?= strpos($_SERVER['PHP_SELF'], '/admin/') !== false ? '../logout.php' : 'logout.php' ?>">
                 <i class="bi bi-box-arrow-right"></i> Logout
               </a>
             </li>
