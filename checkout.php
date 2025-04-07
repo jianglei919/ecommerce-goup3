@@ -2,6 +2,7 @@
 session_start();
 require_once 'config/Database.php';
 require_once 'classes/Product.php';
+require_once 'classes/Order.php';
 
 if (!isset($_SESSION['user'])) {
     header("Location: login.php");
@@ -53,25 +54,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             $userId = $_SESSION['user']['id'];
 
-            // Insert into orders_payment
-            $stmt = $db->prepare("INSERT INTO orders_payment (user_id, fullname, phone, address, city, postal, payment, card, expiry, cvv, note, total, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
-            $stmt->bind_param("isssssssssds", $userId, $fullname, $phone, $address, $city, $postal, $payment, $card, $expiry, $cvv, $note, $grand_total);
-            $stmt->execute();
+            $orderObj = new Order($db);
+            $orderObj->savePaymentInfo($userId, $fullname, $phone, $address, $city, $postal, $payment, $card, $expiry, $cvv, $note, $grand_total);
 
-            // Insert into orders
-            $stmt = $db->prepare("INSERT INTO orders (user_id, total, created_at) VALUES (?, ?, NOW())");
-            $stmt->bind_param("id", $userId, $grand_total);
-            $stmt->execute();
-            $order_id = $stmt->insert_id;
+            $order_id = $orderObj->createOrder($userId, $grand_total);
 
-            // Insert into order_items
-            foreach ($cart as $product_id => $quantity) {
-                $productData = $product->getProduct($product_id);
-                $price = $productData['price'];
-                $stmt = $db->prepare("INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)");
-                $stmt->bind_param("iiid", $order_id, $product_id, $quantity, $price);
-                $stmt->execute();
-            }
+            $orderObj->saveOrderItems($order_id, $cart, $product);
 
             $db->commit();
 

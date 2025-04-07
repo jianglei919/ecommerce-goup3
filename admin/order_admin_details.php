@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once '../config/Database.php';
+require_once '../classes/Order.php';
 
 if (!isset($_SESSION['user']) || !$_SESSION['user']['is_admin']) {
     header("Location: ../login.php");
@@ -16,11 +17,8 @@ $order_id = (int) $_GET['id'];
 $db = (new Database())->getConnection();
 
 // Fetch order & user info
-$orderQuery = $db->prepare("SELECT o.*, u.name AS user_name FROM orders o JOIN users u ON o.user_id = u.id WHERE o.id = ?");
-$orderQuery->bind_param("i", $order_id);
-$orderQuery->execute();
-$orderResult = $orderQuery->get_result();
-$order = $orderResult->fetch_assoc();
+$orderObj = new Order($db);
+$order = $orderObj->getOrderById($order_id);
 
 if (!$order) {
     echo "<h2 class='text-center text-danger mt-5'>Order not found.</h2>";
@@ -28,15 +26,12 @@ if (!$order) {
 }
 
 // Fetch order items
-$itemQuery = $db->prepare("SELECT oi.*, p.name AS product_name FROM order_items oi JOIN products p ON oi.product_id = p.id WHERE oi.order_id = ?");
-$itemQuery->bind_param("i", $order_id);
-$itemQuery->execute();
-$items = $itemQuery->get_result();
+$items = $orderObj->getOrderItems($order_id);
 ?>
 <?php include '../includes/header.php'; ?>
 <div class="container mt-4" style="min-height: 80vh;">
     <h3 class="mb-4">Order #<?= $order_id ?> Details</h3>
-    <p><strong>Customer:</strong> <?= htmlspecialchars($order['user_name']) ?></p>
+    <p><strong>Customer:</strong> <?= htmlspecialchars($order['customer_name']) ?></p>
     <p><strong>Order Date:</strong> <?= $order['created_at'] ?></p>
     <p><strong>Total:</strong> $<?= number_format($order['total'], 2) ?></p>
     <hr>

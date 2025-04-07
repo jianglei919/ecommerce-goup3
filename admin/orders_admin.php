@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once '../config/Database.php';
+require_once '../classes/Order.php';
 
 if (!isset($_SESSION['user']) || !$_SESSION['user']['is_admin']) {
     header("Location: ../login.php");
@@ -9,15 +10,8 @@ if (!isset($_SESSION['user']) || !$_SESSION['user']['is_admin']) {
 
 $db = (new Database())->getConnection();
 
-// 获取所有订单及其用户信息
-$sql = "
-  SELECT orders.id, users.name AS customer_name, orders.total, orders.created_at 
-  FROM orders
-  JOIN users ON orders.user_id = users.id
-  ORDER BY orders.created_at DESC
-";
-
-$result = $db->query($sql);
+$orderObj = new Order($db);
+$result = $orderObj->getAllOrdersWithUser();
 ?>
 <?php include '../includes/header.php'; ?>
 <div class="container mt-4" style="min-height: 80vh;">
