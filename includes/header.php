@@ -24,13 +24,13 @@ if (session_status() === PHP_SESSION_NONE)
             </li>
             <?php if ($_SESSION['user']['is_admin']): ?>
               <li class="nav-item">
-                <a class="nav-link text-white" href="products_admin.php"><i class="bi bi-card-checklist"></i> Products</a>
+              <a class="nav-link text-white" href="<?= strpos($_SERVER['PHP_SELF'], '/admin/') !== false ? 'products_admin.php' : 'admin/products_admin.php' ?>"><i class="bi bi-card-checklist"></i> Products</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link text-white" href="orders_admin.php"><i class="bi bi-bag"></i> Orders</a>
+              <a class="nav-link text-white" href="<?= strpos($_SERVER['PHP_SELF'], '/admin/') !== false ? 'orders_admin.php' : 'admin/orders_admin.php' ?>"><i class="bi bi-bag"></i> Orders</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link text-white" href="users_admin.php"><i class="bi bi-person-lines-fill"></i> Users</a>
+              <a class="nav-link text-white" href="<?= strpos($_SERVER['PHP_SELF'], '/admin/') !== false ? 'users_admin.php' : 'admin/users_admin.php' ?>"><i class="bi bi-person-lines-fill"></i> Users</a>
               </li>
             <?php endif; ?>
             <li class="nav-item">
