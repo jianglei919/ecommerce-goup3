@@ -70,17 +70,26 @@ class Order
     }
 
     // 保存订单项
-    public function saveOrderItems($orderId, $cart, $productObj)
+    public function saveOrderItems($order_id, $items, $productClass)
     {
-        foreach ($cart as $product_id => $quantity) {
-            $product = $productObj->getProduct($product_id);
-            $price = $product['price'];
+        foreach ($items as $item) {
+            $product = $productClass->getProduct($item['product_id']);
 
-            $query = "INSERT INTO order_items (order_id, product_id, quantity, price)
-                      VALUES (?, ?, ?, ?)";
-            $stmt = $this->conn->prepare($query);
-            $stmt->bind_param("iiid", $orderId, $product_id, $quantity, $price);
+            if (!$product) {
+                continue;
+            }
+
+            $price = $product['price'];
+            $quantity = $item['quantity'];
+
+            $stmt = $this->conn->prepare("INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)");
+            if (!$stmt) {
+                continue;
+            }
+
+            $stmt->bind_param("iiid", $order_id, $item['product_id'], $quantity, $price);
             $stmt->execute();
         }
     }
+
 }

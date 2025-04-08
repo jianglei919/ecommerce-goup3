@@ -1,15 +1,10 @@
 <?php
 session_start();
-require_once '../config/Database.php';
-require_once '../classes/Product.php';
 
 if (!isset($_SESSION['user']) || !$_SESSION['user']['is_admin']) {
     header("Location: ../login.php");
     exit();
 }
-
-$db = (new Database())->getConnection();
-$product = new Product($db);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create'])) {
     $name = $_POST['name'];
@@ -29,9 +24,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create'])) {
         }
     }
 
-    $product->createProduct($name, $description, $price, $photo);
-    header("Location: products_admin.php");
-    exit();
+    $payload = json_encode([
+        'name' => $name,
+        'description' => $description,
+        'price' => $price,
+        'photo' => $photo
+    ]);
+
+    $ch = curl_init('http://localhost/ecommerce-goup3/api/products.php');
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($httpCode === 200 || $httpCode === 201) {
+        header("Location: products_admin.php");
+        exit();
+    } else {
+        echo "<div class='alert alert-danger text-center mt-4'>Failed to add product. Server responded with HTTP $httpCode</div>";
+        echo "<pre>$response</pre>";
+    }
 }
 ?>
 

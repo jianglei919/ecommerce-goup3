@@ -1,36 +1,36 @@
 <?php
 session_start();
 require_once 'config/Database.php';
-require_once 'classes/User.php';
 
-$dbObj = new Database();
-$db = $dbObj->getConnection();
-if (!$db) {
-  die('Database connection failed');
-}
-$user = new User($db);
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  // Sanitize and escape inputs
-  $username = mysqli_real_escape_string($db, trim($_POST['username']));
+  $username = trim($_POST['username']);
   $password = trim($_POST['password']);
 
-  // Use prepared statements to fetch user data
-  $stmt = $db->prepare("SELECT * FROM users WHERE username = ?");
-  $stmt->bind_param("s", $username);
-  $stmt->execute();
-  $result = $stmt->get_result();
+  $payload = json_encode([
+    'username' => $username,
+    'password' => $password
+  ]);
 
-  // fetch user data
-  if ($userData = $result->fetch_assoc()) {
-    if (password_verify($password, $userData['password'])) {
-      $_SESSION['user'] = $userData;
-      header("Location: index.php");
-      exit();
-    }
+  $ch = curl_init('http://localhost/ecommerce-goup3/api/users.php?action=login');
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($ch, CURLOPT_POST, true);
+  curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+  curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+
+  $response = curl_exec($ch);
+  $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+  curl_close($ch);
+
+  if ($httpCode === 200) {
+    $user = json_decode($response, true);
+    $_SESSION['user'] = $user['user'];
+    header("Location: index.php");
+    exit();
+  } else {
+    $error = "Invalid credentials";
   }
-  $error = "Invalid credentials";
 }
 ?>
 <?php include 'includes/header.php'; ?>

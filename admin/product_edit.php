@@ -1,7 +1,5 @@
 <?php
 session_start();
-require_once '../config/Database.php';
-require_once '../classes/Product.php';
 
 if (!isset($_SESSION['user']) || !$_SESSION['user']['is_admin']) {
     header("Location: ../login.php");
@@ -13,12 +11,14 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     exit();
 }
 
-$db = (new Database())->getConnection();
-$product = new Product($db);
 $id = (int) $_GET['id'];
-$p = $product->getProduct($id);
+$p = [];
+$response = file_get_contents("http://localhost/ecommerce-goup3/api/products.php?id=$id");
+if ($response) {
+    $p = json_decode($response, true);
+}
 
-if (!$p) {
+if (!$p || isset($p['message'])) {
     echo "<h3 class='text-danger text-center mt-5'>Product not found.</h3>";
     exit();
 }
@@ -41,9 +41,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
         }
     }
 
-    $product->updateProduct($id, $name, $description, $price, $photo);
-    header("Location: products_admin.php");
-    exit();
+    $payload = json_encode([
+        'id' => $id,
+        'name' => $name,
+        'description' => $description,
+        'price' => $price,
+        'photo' => $photo
+    ]);
+
+    $ch = curl_init("http://localhost/ecommerce-goup3/api/products.php");
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+    
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($httpCode === 200 || $httpCode === 204) {
+        header("Location: products_admin.php");
+        exit();
+    } else {
+        echo "<div class='alert alert-danger text-center mt-4'>Failed to update product. Server responded with HTTP $httpCode</div>";
+        echo "<pre>$response</pre>";
+    }
 }
 ?>
 

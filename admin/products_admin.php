@@ -1,18 +1,15 @@
 <?php
 session_start();
-require_once '../config/Database.php';
-require_once '../classes/Product.php';
-
-$db = (new Database())->getConnection();
-$product = new Product($db);
-
-if (!isset($_SESSION['user']) || !$_SESSION['user']['is_admin']) {
-  header("Location: ../login.php");
-  exit();
-}
 
 if (isset($_GET['delete'])) {
-  $product->deleteProduct($_GET['delete']);
+  $deletePayload = json_encode(["id" => (int) $_GET['delete']]);
+  $ch = curl_init("http://localhost/ecommerce-goup3/api/products.php");
+  curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+  curl_setopt($ch, CURLOPT_POSTFIELDS, $deletePayload);
+  curl_exec($ch);
+  curl_close($ch);
   header("Location: products_admin.php");
   exit();
 }
@@ -20,8 +17,14 @@ if (isset($_GET['delete'])) {
 $limit = 10;
 $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
-$products = $product->getAllProducts($limit, $offset);
-$total = $product->countAllProducts();
+
+$allProducts = [];
+$response = file_get_contents("http://localhost/ecommerce-goup3/api/products.php");
+if ($response) {
+  $allProducts = json_decode($response, true);
+}
+$total = count($allProducts);
+$products = array_slice($allProducts, $offset, $limit);
 $total_pages = ceil($total / $limit);
 ?>
 

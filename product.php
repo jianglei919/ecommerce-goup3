@@ -1,7 +1,5 @@
 <?php
 session_start();
-require_once 'config/Database.php';
-require_once 'classes/Product.php';
 
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     header("Location: index.php");
@@ -9,11 +7,11 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 }
 
 $id = (int) $_GET['id'];
-$db = (new Database())->getConnection();
-$productObj = new Product($db);
-$product = $productObj->getProduct($id);
+$apiUrl = "http://localhost/ecommerce-goup3/api/products.php?id=" . $id;
+$response = file_get_contents($apiUrl);
+$product = json_decode($response, true);
 
-if (!$product) {
+if (!$product || isset($product['message'])) {
     echo "<h2 class='text-center mt-5 text-danger'>Product not found</h2>";
     exit();
 }

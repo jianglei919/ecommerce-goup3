@@ -2,12 +2,18 @@
 // cart_view.php
 session_start();
 require_once 'config/Database.php';
-require_once 'classes/Product.php';
 
-$db = (new Database())->getConnection();
-$product = new Product($db);
 $cart = $_SESSION['cart'] ?? [];
 $total = 0;
+$productData = [];
+
+foreach ($cart as $id => $qty) {
+    $response = file_get_contents("http://localhost/ecommerce-goup3/api/products.php?id=" . $id);
+    $item = json_decode($response, true);
+    if ($item) {
+        $productData[$id] = $item;
+    }
+}
 
 ?>
 
@@ -27,7 +33,7 @@ $total = 0;
         </thead>
         <tbody>
             <?php foreach ($cart as $id => $qty):
-                $item = $product->getProduct($id);
+                $item = $productData[$id];
                 $subtotal = $item['price'] * $qty;
                 $total += $subtotal;
                 ?>
@@ -41,18 +47,25 @@ $total = 0;
             <?php endforeach; ?>
         </tbody>
     </table>
-    <?php
-      $hst = $total * 0.13;
-      $grand_total = $total + $hst;
-    ?>
-    <h5>Subtotal: $<?= number_format($total, 2) ?></h5>
-    <h5>HST (13%): $<?= number_format($hst, 2) ?></h5>
-    <h4>Total: $<?= number_format($grand_total, 2) ?></h4>
-    <div class="d-flex justify-content-end mt-auto">
-      <div>
-        <a href="checkout.php" class="btn btn-success">Checkout</a>
-      </div>
-    </div>
+    <?php if (count($cart) > 0): ?>
+        <?php
+          $hst = $total * 0.13;
+          $grand_total = $total + $hst;
+        ?>
+        <h5>Subtotal: $<?= number_format($total, 2) ?></h5>
+        <h5>HST (13%): $<?= number_format($hst, 2) ?></h5>
+        <h4>Total: $<?= number_format($grand_total, 2) ?></h4>
+        <div class="d-flex justify-content-end mt-auto">
+          <div>
+            <a href="checkout.php" class="btn btn-success">Checkout</a>
+          </div>
+        </div>
+    <?php else: ?>
+        <div class="alert alert-info">Your cart is empty.</div>
+        <div class="d-flex justify-content-end mt-auto">
+          <button class="btn btn-success" disabled>Checkout</button>
+        </div>
+    <?php endif; ?>
 </div>
 
 <?php include 'includes/footer.php'; ?>

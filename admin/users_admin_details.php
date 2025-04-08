@@ -1,38 +1,45 @@
 <?php
 session_start();
-require_once '../config/Database.php';
-require_once '../classes/User.php';
-
-$db = (new Database())->getConnection();
-$user = new User($db);
 
 $userId = isset($_GET['Id']) ? filter_var($_GET['Id'], FILTER_SANITIZE_NUMBER_INT) : 0;
+
+if (!isset($_SESSION['user']) || !$_SESSION['user']['is_admin']) {
+    header("Location: ../login.php");
+    exit();
+}
 
 if ($userId <= 0) {
     die("Invalid User");
 }
 
-if (!isset($_SESSION['user']) || !$_SESSION['user']['is_admin']) {
-  header("Location: ../login.php");
-  exit();
+$userInfo = [];
+$response = file_get_contents("http://localhost/ecommerce-goup3/api/users.php?id=$userId");
+if ($response) {
+    $userInfo = json_decode($response, true);
 }
 
-$userInfo = $user->getUser($userId);
-
-if (!$userInfo) {
+if (!$userInfo || isset($userInfo['message'])) {
     echo "<h2 class='text-center mt-5 text-danger'>User not found</h2>";
     exit();
-}  
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $isadmin = isset($_POST['isadmin']) && $_POST['isadmin'] === '1' ? 1 : 0;
+    $payload = json_encode([
+        "id" => $userId,
+        "is_admin" => $isadmin
+    ]);
 
-    if ($user->updateAdminStatus($userId, $isadmin)) {
-        header("Location: users_admin.php");
-        exit();
-    } else {
-        echo "<div class='alert alert-danger'>Error updating admin status.</div>";
-    }
+    $ch = curl_init("http://localhost/ecommerce-goup3/api/users.php");
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+    $result = curl_exec($ch);
+    curl_close($ch);
+
+    header("Location: users_admin.php");
+    exit();
 }
 ?>
 

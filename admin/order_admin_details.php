@@ -1,7 +1,5 @@
 <?php
 session_start();
-require_once '../config/Database.php';
-require_once '../classes/Order.php';
 
 if (!isset($_SESSION['user']) || !$_SESSION['user']['is_admin']) {
     header("Location: ../login.php");
@@ -14,19 +12,25 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 }
 
 $order_id = (int) $_GET['id'];
-$db = (new Database())->getConnection();
 
 // Fetch order & user info
-$orderObj = new Order($db);
-$order = $orderObj->getOrderById($order_id);
+$order = [];
+$items = [];
+
+$apiUrl = "http://localhost/ecommerce-goup3/api/orders.php?id=" . $order_id;
+$response = file_get_contents($apiUrl);
+if ($response) {
+    $data = json_decode($response, true);
+    if (isset($data['id'])) {
+        $order = $data;
+        $items = $data['items'] ?? [];
+    }
+}
 
 if (!$order) {
     echo "<h2 class='text-center text-danger mt-5'>Order not found.</h2>";
     exit();
 }
-
-// Fetch order items
-$items = $orderObj->getOrderItems($order_id);
 ?>
 <?php include '../includes/header.php'; ?>
 <div class="container mt-4" style="min-height: 80vh;">
@@ -46,14 +50,14 @@ $items = $orderObj->getOrderItems($order_id);
             </tr>
         </thead>
         <tbody>
-            <?php while ($item = $items->fetch_assoc()): ?>
+            <?php foreach ($items as $item): ?>
                 <tr>
                     <td><?= htmlspecialchars($item['product_name']) ?></td>
                     <td><?= $item['quantity'] ?></td>
                     <td>$<?= number_format($item['price'], 2) ?></td>
                     <td>$<?= number_format($item['price'] * $item['quantity'], 2) ?></td>
                 </tr>
-            <?php endwhile; ?>
+            <?php endforeach; ?>
         </tbody>
     </table>
     <a href="orders_admin.php" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Back to Orders</a>

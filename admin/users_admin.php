@@ -1,23 +1,25 @@
 <?php
 session_start();
-require_once '../config/Database.php';
-require_once '../classes/User.php';
 
-$db = (new Database())->getConnection();
-$user = new User($db);
-
-if (!isset($_SESSION['user']) || !$_SESSION['user']['is_admin']) {
-  header("Location: ../login.php");
-  exit();
+$users = [];
+$response = file_get_contents("http://localhost/ecommerce-goup3/api/users.php");
+if ($response) {
+  $users = json_decode($response, true);
 }
 
 if (isset($_GET['delete'])) {
-  $user->deleteUser($_GET['delete']);
+  $deletePayload = json_encode(["id" => (int) $_GET['delete']]);
+  $ch = curl_init("http://localhost/ecommerce-goup3/api/users.php");
+  curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+  curl_setopt($ch, CURLOPT_POSTFIELDS, $deletePayload);
+  $result = curl_exec($ch);
+  curl_close($ch);
   header("Location: users_admin.php");
   exit();
 }
 
-$users = $user->getAllUsers();
 ?>
 
 <?php include '../includes/header.php'; ?>

@@ -1,77 +1,45 @@
 <?php
-require_once 'config/Database.php';
-require_once 'classes/User.php';
+session_start();
 
-$dbObj = new Database();
-$db = $dbObj->getConnection();
-if (!$db) {
-  die('Database connection failed');
-}
-
-$errors = [];
+$error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  // Sanitize inputs
   $username = trim($_POST['username']);
   $password = trim($_POST['password']);
+  $confirm_password = trim($_POST['confirm_password']);
   $name = trim($_POST['name']);
   $address = trim($_POST['address']);
   $phone = trim($_POST['phone']);
   $email = trim($_POST['email']);
 
-  // Validate and sanitize input to protect XSS
-  $username = htmlspecialchars($username, ENT_QUOTES, 'UTF-8');
-  $name = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
-  $address = htmlspecialchars($address, ENT_QUOTES, 'UTF-8');
-  $phone = htmlspecialchars($phone, ENT_QUOTES, 'UTF-8');
-  $email = filter_var($email, FILTER_SANITIZE_EMAIL);
+  if ($password !== $confirm_password) {
+    $error = "Passwords do not match.";
+  } else {
+    $payload = json_encode([
+      'username' => $username,
+      'password' => $password,
+      'name' => $name,
+      'address' => $address,
+      'phone' => $phone,
+      'email' => $email
+    ]);
 
-  // Email Validation (Format Check)
-  if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-      $errors['email'] = "Invalid email format.";
-  }
+    $ch = curl_init('http://localhost/ecommerce-goup3/api/users.php');
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
 
-  // Phone Validation (Canada Standard)
-  $phonePattern = "/^(?:\+1\s?)?(?:\(\d{3}\)\s?|\d{3}[-.\s]?)\d{3}[-.\s]?\d{4}$/";
-  if (!empty($phone) && !preg_match($phonePattern, $phone)) {
-      $errors['phone'] = "Invalid Canadian phone number format.";
-  }
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
 
-  // Check for duplicate username or email
-  $stmt = $db->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
-  $stmt->bind_param("ss", $username, $email);
-  $stmt->execute();
-  $stmt->store_result();
-
-  if ($stmt->num_rows > 0) {
-      $errors['duplicate'] = "Username or Email already exists. Please try a different one.";
-  }
-  $stmt->close();
-
-  // Proceed if no errors
-  if (empty($errors)) {
-      // Hash the password securely
-      $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-
-      // Prepare the statement
-      $stmt = $db->prepare("INSERT INTO users (username, password, name, address, phone, email) VALUES (?, ?, ?, ?, ?, ?)");
-
-      //escape inputs to protect SQL Injection
-      $username = mysqli_real_escape_string($db, $username);
-      $name = mysqli_real_escape_string($db, $name);
-      $address = mysqli_real_escape_string($db, $address);
-      $phone = mysqli_real_escape_string($db, $phone);
-      $email = mysqli_real_escape_string($db, $email);
-
-      $stmt->bind_param("ssssss", $username, $hashed_password, $name, $address, $phone, $email);
-      $success = $stmt->execute();
-
-      if ($success) {
-          header("Location: login.php");
-          exit();
-      } else {
-          $errors['general'] = "Registration failed. Please try again.";
-      }
+    if ($httpCode === 200) {
+      header("Location: login.php");
+      exit();
+    } else {
+      $error = "Registration failed. Please check your inputs.";
+    }
   }
 }
 ?>
@@ -80,12 +48,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <h2 id="registration-title">User Registration</h2>
 
   <!-- Show validation error message -->
-  <?php if (!empty($errors)): ?>
+  <?php if (!empty($error)): ?>
     <div class="alert alert-danger"  role="alert" aria-live="polite">
       <ul>
-        <?php foreach ($errors as $error): ?>
-          <li><?php echo $error; ?></li>
-        <?php endforeach; ?>
+        <li><?php echo $error; ?></li>
       </ul>
     </div>
   <?php endif; ?>
@@ -97,6 +63,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <label for="password" class="form-label">Password</label>
     <input id="password" type="password" name="password" class="form-control mb-2" required placeholder="Enter your password" 
             aria-required="true" tabindex="2">
+
+    <label for="confirm_password" class="form-label">Confirm Password</label>
+    <input id="confirm_password" type="password" name="confirm_password" class="form-control mb-2" required placeholder="Confirm your password"
+           aria-required="true" tabindex="2">
 
     <label for="name" class="form-label">Full Name</label>
     <input id="name" name="name" class="form-control mb-2" required placeholder="Enter your full name" 

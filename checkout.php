@@ -1,8 +1,8 @@
 <?php
 session_start();
 require_once 'config/Database.php';
-require_once 'classes/Product.php';
-require_once 'classes/Order.php';
+
+// Removed direct Product class usage
 
 if (!isset($_SESSION['user'])) {
     header("Location: login.php");
@@ -10,13 +10,17 @@ if (!isset($_SESSION['user'])) {
 }
 
 $db = (new Database())->getConnection();
-$product = new Product($db);
 $cart = $_SESSION['cart'] ?? [];
 $total = 0;
+$productData = [];
 
 foreach ($cart as $id => $qty) {
-    $p = $product->getProduct($id);
-    $total += $p['price'] * $qty;
+    $response = file_get_contents("http://localhost/ecommerce-goup3/api/products.php?id=" . $id);
+    $p = json_decode($response, true);
+    if ($p) {
+        $productData[$id] = $p;
+        $total += $p['price'] * $qty;
+    }
 }
 $hst = $total * 0.13;
 $grand_total = $total + $hst;
@@ -49,20 +53,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($errors)) {
-        $db->begin_transaction();
+        $userId = $_SESSION['user']['id'];
+        $items = [];
+        foreach ($cart as $product_id => $quantity) {
+            $items[] = ['product_id' => $product_id, 'quantity' => $quantity];
+        }
 
-        try {
-            $userId = $_SESSION['user']['id'];
+        $payload = json_encode([
+            'user_id' => $userId,
+            'fullname' => $fullname,
+            'phone' => $phone,
+            'address' => $address,
+            'city' => $city,
+            'postal' => $postal,
+            'payment' => $payment,
+            'card' => $card,
+            'expiry' => $expiry,
+            'cvv' => $cvv,
+            'note' => $note,
+            'total' => $grand_total,
+            'items' => $items
+        ]);
 
-            $orderObj = new Order($db);
-            $orderObj->savePaymentInfo($userId, $fullname, $phone, $address, $city, $postal, $payment, $card, $expiry, $cvv, $note, $grand_total);
+        $ch = curl_init('http://localhost/ecommerce-goup3/api/orders.php');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
 
-            $order_id = $orderObj->createOrder($userId, $grand_total);
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
 
-            $orderObj->saveOrderItems($order_id, $cart, $product);
-
-            $db->commit();
-
+        if ($httpCode === 200 || $httpCode === 201) {
+            unset($_SESSION['cart']);
             require_once 'fpdf/fpdf.php';
 
             $pdf = new FPDF();
@@ -70,7 +94,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pdf->SetFont('Arial', 'B', 16);
             $pdf->Cell(0, 10, 'Invoice', 0, 1, 'C');
             $pdf->Ln(5);
-
             $pdf->SetFont('Arial', '', 12);
             $pdf->Cell(0, 10, 'Customer: ' . $fullname, 0, 1);
             $pdf->Cell(0, 10, 'Phone: ' . $phone, 0, 1);
@@ -87,11 +110,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $pdf->SetFont('Arial', '', 12);
             foreach ($cart as $product_id => $quantity) {
-                $productData = $product->getProduct($product_id);
-                $price = $productData['price'];
+                $productInfo = $productData[$product_id];
+                $price = $productInfo['price'];
                 $subtotal = $price * $quantity;
 
-                $pdf->Cell(60, 10, $productData['name'], 1);
+                $pdf->Cell(60, 10, $productInfo['name'], 1);
                 $pdf->Cell(30, 10, $quantity, 1, 0, 'C');
                 $pdf->Cell(30, 10, '$' . number_format($price, 2), 1, 0, 'R');
                 $pdf->Cell(40, 10, '$' . number_format($subtotal, 2), 1, 0, 'R');
@@ -112,12 +135,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pdf->Cell(0, 10, 'Thank you for your order!', 0, 1);
             $pdf->Cell(0, 10, 'You can return to our website to continue shopping.', 0, 1);
 
-            unset($_SESSION['cart']);
             $pdf->Output("I", "invoice.pdf");
             exit();
-        } catch (Exception $e) {
-            $db->rollback();
-            $errors[] = "Order failed: " . $e->getMessage();
+        } else {
+            $errors[] = "Order failed. Please try again.";
         }
     }
 }

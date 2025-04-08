@@ -1,17 +1,16 @@
 <?php
 session_start();
-require_once '../config/Database.php';
-require_once '../classes/Order.php';
 
 if (!isset($_SESSION['user']) || !$_SESSION['user']['is_admin']) {
     header("Location: ../login.php");
     exit();
 }
 
-$db = (new Database())->getConnection();
-
-$orderObj = new Order($db);
-$result = $orderObj->getAllOrdersWithUser();
+$result = [];
+$response = file_get_contents("http://localhost/ecommerce-goup3/api/orders.php");
+if ($response) {
+    $result = json_decode($response, true);
+}
 ?>
 <?php include '../includes/header.php'; ?>
 <div class="container mt-4" style="min-height: 80vh;">
@@ -27,7 +26,7 @@ $result = $orderObj->getAllOrdersWithUser();
             </tr>
         </thead>
         <tbody>
-            <?php while ($row = $result->fetch_assoc()): ?>
+            <?php foreach ($result as $row): ?>
                 <tr>
                     <td><?= $row['id'] ?></td>
                     <td><?= htmlspecialchars($row['customer_name']) ?></td>
@@ -35,7 +34,7 @@ $result = $orderObj->getAllOrdersWithUser();
                     <td><?= $row['created_at'] ?></td>
                     <td><a href="order_admin_details.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-primary">View</a></td>
                 </tr>
-            <?php endwhile; ?>
+            <?php endforeach; ?>
         </tbody>
     </table>
 </div>
