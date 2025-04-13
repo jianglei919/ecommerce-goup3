@@ -15,14 +15,16 @@ CREATE TABLE users (
 );
 
 -- 产品表
-CREATE TABLE products (
+CREATE TABLE products ( 
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-    description TEXT,
+    short_description VARCHAR(255),
+    long_description TEXT,
     price DECIMAL(10,2) NOT NULL,
     photo VARCHAR(255) DEFAULT 'default.jpg',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 
 -- 购物车表
 CREATE TABLE carts (
