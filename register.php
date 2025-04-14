@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <?php if (!empty($error)): ?>
     <div class="alert alert-danger"  role="alert" aria-live="polite">
       <ul>
-        <li><?php echo $error; ?></li>
+        <li><?php echo htmlspecialchars($error, ENT_QUOTES, 'UTF-8'); ?></li>
       </ul>
     </div>
   <?php endif; ?>
@@ -77,15 +77,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             aria-required="true" tabindex="4">
 
     <label for="phone" class="form-label">Phone</label>
-    <input id="phone" name="phone" class="form-control mb-2" placeholder="Enter your phone number" 
+    <input id="phone" name="phone" class="form-control mb-2" placeholder="Enter your phone number" aria-required="true"
             aria-describedby="phoneHelp" tabindex="5">
 
     <label for="email" class="form-label">Email</label>
-    <input id="email" name="email" type="email" class="form-control mb-2" required placeholder="Enter your email" 
+    <label class="text-danger" id="email_error"></label>
+    <input id="email" name="email" type="email" class="form-control mb-2" onfocusout="checkDuplicateEmail()" required placeholder="Enter your email" 
             aria-required="true" aria-describedby="emailHelp" tabindex="6">
-
     <button class="btn btn-primary" tabindex="7"><i class="bi bi-person-add"></i> Register</button>
     <button type="reset" class="btn btn-secondary" tabindex="8">Reset</button>
   </form>
+  <script src='check_duplicate_email.js'></script>
 </div>
 <?php include 'includes/footer.php'; ?>

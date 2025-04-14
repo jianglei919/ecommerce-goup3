@@ -11,6 +11,17 @@ class User
 
   public function register($username, $password, $name, $address, $phone, $email)
   {
+    // Validate input
+    if (empty($username) || empty($password) || empty($name) || empty($address) || empty($phone) || empty($email)) {
+      return false;
+    }
+    // Protect against SQL injection
+    $username = mysqli_real_escape_string($this->conn, $username);
+    $password = mysqli_real_escape_string($this->conn, $password);
+    $name = mysqli_real_escape_string($this->conn, $name);
+    $address = mysqli_real_escape_string($this->conn, $address);
+    $phone = mysqli_real_escape_string($this->conn, $phone);
+    $email = mysqli_real_escape_string($this->conn, $email);
     // Check for duplicate username or email
     $check = $this->conn->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
     $check->bind_param("ss", $username, $email);
@@ -40,6 +51,10 @@ class User
 
   public function login($username, $password)
   {
+    // Protect against SQL injection
+    $username = mysqli_real_escape_string($this->conn, $username);
+    $password = mysqli_real_escape_string($this->conn, $password);
+
     $query = "SELECT * FROM users WHERE username = ?";
     $stmt = $this->conn->prepare($query);
 
@@ -55,6 +70,29 @@ class User
     if ($user && password_verify($password, $user['password'])) {
       unset($user['password']);
       return $user;
+    }
+    return false;
+  }
+
+  public function checkDuplicateEmail($email)
+  {
+    // Protect against SQL injection
+    $email = mysqli_real_escape_string($this->conn, $email);
+
+    $query = "SELECT * FROM users WHERE email = ?";
+    $stmt = $this->conn->prepare($query);
+
+    if (!$stmt) {
+      throw new Exception("check duplicate email prepare failed: " . $this->conn->error);
+    }
+
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
+
+    if ($user) {
+      return true; // Email already exists
     }
     return false;
   }

@@ -9,6 +9,19 @@ $user = new User($db);
 
 $method = $_SERVER['REQUEST_METHOD'];
 
+if(isset($_GET['email']) && $_GET['email']) {
+    $email = $_GET['email'];
+    $result = $user->checkDuplicateEmail($email);
+    if ($result) {
+        $status = 'duplicate';
+    } else {
+        $status = 'valid';
+    }
+    
+	echo json_encode(array('status' => $status));
+    exit();
+}
+
 if ($method === 'POST' && isset($_GET['action']) && $_GET['action'] === 'login') {
     $input = json_decode(file_get_contents("php://input"), true);
 
