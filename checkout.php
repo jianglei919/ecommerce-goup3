@@ -208,7 +208,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <strong>HST (13%): $<?= number_format($hst, 2) ?></strong><br>
             <strong>Total: $<?= number_format($grand_total, 2) ?></strong>
         </div>
-        <button type="submit" class="btn btn-success w-100">Place Order</button>
+        <div class="mb-3">
+            <button type="submit" class="btn btn-success w-100"><i class="bi bi-credit-card-2-back-fill"></i> Place Order</button>
+            <a href="index.php" class="btn btn-outline-secondary mt-4"><i class="bi bi-arrow-left"></i> Back to Home</a>
+        </div>
     </form>
 </div>
 <?php include 'includes/footer.php'; ?>

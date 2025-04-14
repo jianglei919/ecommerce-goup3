@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <input id="email" name="email" type="email" class="form-control mb-2" required placeholder="Enter your email" 
             aria-required="true" aria-describedby="emailHelp" tabindex="6">
 
-    <button class="btn btn-primary" tabindex="7">Register</button>
+    <button class="btn btn-primary" tabindex="7"><i class="bi bi-person-add"></i> Register</button>
     <button type="reset" class="btn btn-secondary" tabindex="8">Reset</button>
   </form>
 </div>

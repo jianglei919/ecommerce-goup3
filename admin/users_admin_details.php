@@ -63,8 +63,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <option value="1" <?= $userInfo['is_admin'] == 1 ? 'selected' : '' ?>>Yes</option>
     </select>
 
-    <button type="submit" class="btn btn-primary">Update</button>
-    <a href="users_admin.php" class="btn btn-secondary">Back</a>
+    <button type="submit" class="btn btn-primary"><i class="bi bi-arrow-clockwise"></i> &nbsp;Update</button>
+    <a href="users_admin.php" class="btn btn-secondary">Back &nbsp; <i class="bi bi-x-circle"></i></a>
     </form>
 </div>
 

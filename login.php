@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <label for="password" class="form-label">Password</label>
     <input type="password" name="password" class="form-control mb-2" placeholder="Enter password" aria-required="true" tabindex="2" required>
-    <button class="btn btn-primary" tabindex="3">Login</button>
+    <button class="btn btn-primary" tabindex="3"><i class="bi bi-box-arrow-in-right"></i> Login</button>
   </form>
   <p class="mt-3">Don't have an account? <a href="register.php" tabindex="4">Register here</a>.</p>
     </div>

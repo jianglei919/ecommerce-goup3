@@ -9,7 +9,7 @@ if (!$db) {
   echo "Connected to the database.";
 }
 
-$limit = 6; // Limit product list count
+$limit = 12; // Limit product list count
 $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 
@@ -93,7 +93,8 @@ if (is_array($allProducts)) {
                 <a href="product.php?id=<?= $prod['id'] ?>"
                   class="text-decoration-none text-primary"><?= htmlspecialchars($prod['name']) ?></a>
               </h5>
-              <p class="card-text">$<?= number_format($prod['price'], 2) ?></p>
+              <p class="card-text"><b>$<?= number_format($prod['price'], 2) ?></b></p>
+              <p class="card-text"><?= htmlspecialchars($prod['short_description']) ?></p>
               <form method="POST" action="cart_add.php">
                 <input type="hidden" name="product_id" value="<?= $prod['id'] ?>">
                 <div class="d-flex gap-2">

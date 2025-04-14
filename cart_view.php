@@ -21,7 +21,7 @@ foreach ($cart as $id => $qty) {
 
 <div class="container mt-4 d-flex flex-column justify-content-between" style="min-height: 80vh;">
     <h2>My Cart</h2>
-    <table class="table">
+    <table class="table table-bordered table-striped mt-4">
         <thead>
             <tr>
                 <th>Product</th>
@@ -42,7 +42,7 @@ foreach ($cart as $id => $qty) {
                     <td>$<?= $item['price'] ?></td>
                     <td><?= $qty ?></td>
                     <td>$<?= number_format($subtotal, 2) ?></td>
-                    <td><a href="remove_from_cart.php?id=<?= $id ?>" class="btn btn-danger btn-sm">Remove</a></td>
+                    <td><a href="remove_from_cart.php?id=<?= $id ?>" class="btn btn-danger btn-sm"> <i class="bi bi-trash3"></i>&nbsp;Remove</a></td>
                 </tr>
             <?php endforeach; ?>
         </tbody>
@@ -57,15 +57,20 @@ foreach ($cart as $id => $qty) {
         <h4>Total: $<?= number_format($grand_total, 2) ?></h4>
         <div class="d-flex justify-content-end mt-auto">
           <div>
-            <a href="checkout.php" class="btn btn-success">Checkout</a>
-          </div>
+            <a href="checkout.php" class="btn btn-success"><i class="bi bi-credit-card-2-back-fill"></i> Checkout</a>
+        </div>
+        
         </div>
     <?php else: ?>
         <div class="alert alert-info">Your cart is empty.</div>
         <div class="d-flex justify-content-end mt-auto">
-          <button class="btn btn-success" disabled>Checkout</button>
+          <button class="btn btn-success" disabled><i class="bi bi-credit-card-2-back-fill"></i> Checkout</button>
+         
         </div>
     <?php endif; ?>
+    <div>
+              <a href="index.php" class="btn btn-outline-secondary mt-4"><i class="bi bi-arrow-left"></i> Back to Home</a>
+          </div>
 </div>
 
 <?php include 'includes/footer.php'; ?>

@@ -33,11 +33,7 @@ if (session_status() === PHP_SESSION_NONE)
               <a class="nav-link text-white" href="<?= strpos($_SERVER['PHP_SELF'], '/admin/') !== false ? 'users_admin.php' : 'admin/users_admin.php' ?>"><i class="bi bi-person-lines-fill"></i> Users</a>
               </li>
             <?php endif; ?>
-            <li class="nav-item">
-              <a class="nav-link text-white" href="<?= strpos($_SERVER['PHP_SELF'], '/admin/') !== false ? '../logout.php' : 'logout.php' ?>">
-                <i class="bi bi-box-arrow-right"></i> Logout
-              </a>
-            </li>
+
             <?php if (!$_SESSION['user']['is_admin']): ?>
               <li class="nav-item">
                 <a class="nav-link text-white" href="index.php">
@@ -53,6 +49,11 @@ if (session_status() === PHP_SESSION_NONE)
                 </a>
               </li>
             <?php endif; ?>
+            <li class="nav-item">
+              <a class="nav-link text-white" href="<?= strpos($_SERVER['PHP_SELF'], '/admin/') !== false ? '../logout.php' : 'logout.php' ?>">
+                <i class="bi bi-box-arrow-right"></i> Logout
+              </a>
+            </li>
           <?php else: ?>
             <li class="nav-item">
               <a class="nav-link text-white" href="login.php"><i class="bi bi-box-arrow-in-right"></i> Login</a>

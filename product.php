@@ -31,10 +31,10 @@ if (!file_exists($imgPath) || empty($product['photo'])) {
         <div class="col-md-6">
             <h2 class="text-primary fw-bold mb-3"><?= htmlspecialchars($product['name']) ?></h2>
             <h4 class="text-success mb-3">$<?= number_format($product['price'], 2) ?></h4>
-            <p class="text-muted"><?= nl2br(htmlspecialchars($product['description'])) ?></p>
+            <p class="text-muted"><?= nl2br(htmlspecialchars($product['long_description'])) ?></p>
 
             <form method="POST" action="cart_add.php" class="mt-4">
-                <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
+                <input type="hidden" name="product_id" value="<?= $product['id'] ?>"> 
                 <div class="d-flex align-items-center gap-3">
                     <label for="quantity" class="form-label mb-0">Quantity:</label>
                     <input type="number" name="quantity" id="quantity" value="1" min="1" class="form-control"
