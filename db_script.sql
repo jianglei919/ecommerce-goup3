@@ -101,7 +101,7 @@ With the new M3 Pro architecture, users experience blazing-fast speeds, superior
 It includes a wide range of ports including HDMI, SD card slot, and Thunderbolt 4, ensuring compatibility with professional workflows. 
 Combined with a studio-quality mic system and a six-speaker sound system, the MacBook Pro offers an all-in-one creative workstation experience.',
     3299.99,
-    'default.jpg',
+    'Apple-MacBook-Pro-16-inch-(M3-Pro).jpg',
     CURRENT_TIMESTAMP
 );
 
@@ -114,7 +114,7 @@ Equipped with the latest Snapdragon processor and massive RAM options, it handle
 
 With an integrated S Pen, users can take notes, draw, and navigate with precision. Its robust build, water resistance, and advanced camera features make it a top-tier choice for Android enthusiasts and professionals alike.',
     1399.99,
-    'default.jpg',
+    'samsungS24.jpg',
     CURRENT_TIMESTAMP
 );
 
@@ -127,7 +127,7 @@ These headphones support LDAC, Hi-Res Audio, and have intuitive touch controls f
 
 Comfortable for long hours, they feature soft synthetic leather and a lightweight frame. With up to 30 hours of battery life and quick charge capabilities, these are perfect for travelers, remote workers, and audiophiles alike.',
     399.99,
-    'default.jpg',
+    'Sony-WH-1000XM5-Headphones.jpg',
     CURRENT_TIMESTAMP
 );
 
@@ -140,7 +140,7 @@ Powered by Intel’s 13th-gen processors and fast NVMe SSDs, it delivers smooth 
 
 Its minimalist design and glass touchpad make it stand out in a crowded field of laptops. Whether you''re coding, writing, or browsing, the XPS 13 Plus is a refined companion for modern users who value both form and function.',
     1249.99,
-    'default.jpg',
+    'Dell-XPS-13-Plus.jpg',
     CURRENT_TIMESTAMP
 );
 
@@ -153,7 +153,7 @@ With support for the Apple Pencil 2 and Magic Keyboard, it''s ideal for artists,
 
 It boasts Wi-Fi 6E, 5G capabilities, and all-day battery life. Combined with iPadOS’s powerful multitasking tools, this iPad offers an experience close to a full-fledged computer in a much lighter, more portable form.',
     1099.99,
-    'default.jpg',
+    'Apple-iPad-Pro-12.9-inch-(M2).jpg',
     CURRENT_TIMESTAMP
 );
 
@@ -170,7 +170,7 @@ The 6.7-inch OLED display provides vibrant visuals, and the triple-camera setup 
 With long-term software support and exclusive Pixel features, it’s a top choice for those who prefer stock Android. 
 Security updates, Material You design, and smooth integration with Google services make the Pixel 8 Pro a productivity powerhouse.',
     999.99,
-    'default.jpg',
+    'Google-Pixel-8-Pro.jpg',
     CURRENT_TIMESTAMP
 );
 
@@ -184,7 +184,7 @@ Powered by Intel Core i7 and Iris Xe graphics, it handles everyday tasks with ea
 The rotating soundbar with Bowers & Wilkins speakers provides immersive audio, while its all-metal chassis gives a premium feel. 
 Ideal for students and creatives who value versatility and design.',
     1399.0,
-    'default.jpg',
+    'Lenovo-Yoga-9i.jpg',
     CURRENT_TIMESTAMP
 );
 
@@ -197,7 +197,7 @@ Its health sensors monitor heart rate, blood oxygen, and sleep, making it a reli
 Seamlessly integrated with the Apple ecosystem, it allows quick responses, app interactions, and fitness tracking on the go. 
 Its durable build and stylish bands make it both functional and fashionable.',
     399.0,
-    'default.jpg',
+    'Apple-Watch-Series-9.jpg',
     CURRENT_TIMESTAMP
 );
 
@@ -210,7 +210,7 @@ Equipped with AMD Ryzen 9 and NVIDIA RTX 4070, it handles demanding games and cr
 Its QHD 165Hz display ensures fluid visuals, and the AniMe Matrix lid adds a customizable aesthetic touch. 
 Perfect for gamers and creators who want power without bulk.',
     1899.99,
-    'default.jpg',
+    'ASUS-ROG-Zephyrus-G14.jpg',
     CURRENT_TIMESTAMP
 );
 
@@ -223,7 +223,7 @@ It features a 32.5MP APS-C sensor, Dual Pixel autofocus, and in-body stabilizati
 Its ergonomic build and weather sealing make it ideal for outdoor shoots. 
 With fast burst rates and accurate tracking, it''s a top choice for wildlife and action photography.',
     1499.0,
-    'default.jpg',
+    'Canon-EOS-R7-Mirrorless-Camera.jpg',
     CURRENT_TIMESTAMP
 );
 
@@ -237,7 +237,7 @@ INSERT INTO products (name, short_description, long_description, price, photo, c
 
 Its premium build, quad speakers, and water resistance make it a versatile device for entertainment and work alike. Perfect for those who want a tablet that can replace a laptop.',
     1199.00,
-    'default.jpg',
+    'galaxyTabS9.jpg',
     CURRENT_TIMESTAMP
 );
 
@@ -248,7 +248,7 @@ INSERT INTO products (name, short_description, long_description, price, photo, c
 
 It supports pen input and touch, making it a great tool for designers and architects. Perfect for Windows users needing performance and adaptability.',
     2199.00,
-    'default.jpg',
+    'microsoftSurfaceLS2.jpg',
     CURRENT_TIMESTAMP
 );
 
@@ -259,7 +259,7 @@ INSERT INTO products (name, short_description, long_description, price, photo, c
 
 With customizable gestures and app-specific profiles, it streamlines multitasking across multiple screens. Great for developers, editors, and professionals.',
     99.99,
-    'default.jpg',
+    'LogitechMXMaster3S.jpg',
     CURRENT_TIMESTAMP
 );
 
@@ -270,7 +270,7 @@ INSERT INTO products (name, short_description, long_description, price, photo, c
 
 Its compact build and multiple ports make it a must-have for travelers and power users. Keep your devices running wherever you go.',
     149.95,
-    'default.jpg',
+    'Anker737PowerBank.jpg',
     CURRENT_TIMESTAMP
 );
 
@@ -281,6 +281,6 @@ INSERT INTO products (name, short_description, long_description, price, photo, c
 
 It captures stunning 4K video and crisp 48MP photos, making it ideal for hobbyists and content creators. Foldable and portable, it’s ready to go on any adventure.',
     759.00,
-    'default.jpg',
+    'DJI-Mini-4-Pro-Drone.jpg',
     CURRENT_TIMESTAMP
 );
