@@ -33,25 +33,26 @@ class Product
     return $result->fetch_assoc();
   }
 
-  public function createProduct($name, $description, $price, $photo)
+  public function createProduct($name, $short_description, $long_description, $price, $photo)
   {
-    $query = "INSERT INTO " . $this->table_name . " (name, description, price, photo) VALUES (?, ?, ?, ?)";
+    $query = "INSERT INTO " . $this->table_name . " (name, short_description, long_description, price, photo) VALUES (?, ?, ?, ?, ?)";
     $stmt = $this->conn->prepare($query);
-    $stmt->bind_param("ssds", $name, $description, $price, $photo);
+    $stmt->bind_param("sssds", $name, $short_description, $long_description, $price, $photo);
     return $stmt->execute();
+    
   }
 
-  public function updateProduct($id, $name, $description, $price, $photo = null)
+  public function updateProduct($id, $name, $short_description, $long_description, $price, $photo = null)
   {
     if ($photo) {
-      $query = "UPDATE " . $this->table_name . " SET name = ?, description = ?, price = ?, photo = ? WHERE id = ?";
+      $query = "UPDATE " . $this->table_name . " SET name = ?, short_description = ?, long_description = ?, price = ?, photo = ? WHERE id = ?";
       $stmt = $this->conn->prepare($query);
-      $stmt->bind_param("ssdsi", $name, $description, $price, $photo, $id);
+      $stmt->bind_param("sssssi", $name, $short_description, $long_description, $price, $photo, $id);
       return $stmt->execute();
     } else {
-      $query = "UPDATE " . $this->table_name . " SET name = ?, description = ?, price = ? WHERE id = ?";
+      $query = "UPDATE " . $this->table_name . " SET name = ?, short_description = ?, long_description = ?, price = ? WHERE id = ?";
       $stmt = $this->conn->prepare($query);
-      $stmt->bind_param("ssdi", $name, $description, $price, $id);
+      $stmt->bind_param("ssdi", $name, $short_description,$long_description, $price, $id);
       return $stmt->execute();
     }
   }
@@ -67,7 +68,7 @@ class Product
   public function searchProducts($keyword, $limit = 6, $offset = 0)
   {
     $keyword = "%" . $keyword . "%";
-    $query = "SELECT * FROM " . $this->table_name . " WHERE name LIKE ? OR description LIKE ? ORDER BY created_at DESC LIMIT ? OFFSET ?";
+    $query = "SELECT * FROM " . $this->table_name . " WHERE name LIKE ? OR short_description LIKE ? ORDER BY created_at DESC LIMIT ? OFFSET ?";
     $stmt = $this->conn->prepare($query);
     $stmt->bind_param("ssii", $keyword, $keyword, $limit, $offset);
     $stmt->execute();
@@ -90,7 +91,7 @@ class Product
   public function countSearchResults($keyword)
   {
     $keyword = "%" . $keyword . "%";
-    $query = "SELECT COUNT(*) AS total FROM " . $this->table_name . " WHERE name LIKE ? OR description LIKE ?";
+    $query = "SELECT COUNT(*) AS total FROM " . $this->table_name . " WHERE name LIKE ? OR short_description LIKE ?";
     $stmt = $this->conn->prepare($query);
     $stmt->bind_param("ss", $keyword, $keyword);
     $stmt->execute();

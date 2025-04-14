@@ -8,7 +8,8 @@ if (!isset($_SESSION['user']) || !$_SESSION['user']['is_admin']) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create'])) {
     $name = $_POST['name'];
-    $description = $_POST['description'];
+    $short_description = $_POST['short_description'];
+    $long_description = $_POST['long_description'];
     $price = $_POST['price'];
     $photo = '';
 
@@ -26,7 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create'])) {
 
     $payload = json_encode([
         'name' => $name,
-        'description' => $description,
+        'short_description' => $short_description,
+        'long_description' => $long_description,
         'price' => $price,
         'photo' => $photo
     ]);
@@ -59,8 +61,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create'])) {
             <input name="name" required class="form-control" placeholder="Product Name">
         </div>
         <div class="mb-3">
-            <label for="description" class="form-label">Description</label>
-            <textarea name="description" required class="form-control" placeholder="Description"></textarea>
+            <label for="short_description" class="form-label">Short description</label>
+            <textarea name="short_description" required class="form-control" placeholder="Short description"></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="long_description" class="form-label">Long description</label>
+            <textarea name="long_description" required class="form-control" placeholder="Long description"></textarea>
         </div>
         <div class="mb-3">
             <label for="price" class="form-label">Price</label>
@@ -70,8 +76,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create'])) {
             <label for="photo" class="form-label">Photo</label>
             <input type="file" name="photo" class="form-control">
         </div>
-        <button class="btn btn-primary" name="create">Add Product</button>
-        <a href="products_admin.php" class="btn btn-secondary">Cancel</a>
+        <div class="mb-3">
+        <button class="btn btn-primary" name="create"><i class="bi bi-patch-plus"></i>&nbsp;Add Product</button>
+        <a href="products_admin.php" class="btn btn-secondary">Cancel &nbsp; <i class="bi bi-x-circle"></i></a>
+        </div>
+       
     </form>
 </div>
 <?php include '../includes/footer.php'; ?>

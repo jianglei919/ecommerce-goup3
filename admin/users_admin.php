@@ -32,7 +32,8 @@ if (isset($_GET['delete'])) {
         <th>Name</th>
         <th>Email</th>
         <th>Admin</th>
-        <th>Action</th>
+        <th style="width: 150px;">Edit</th>
+        <th style="width: 150px;">Delete</th>
       </tr>
     </thead>
     <tbody>
@@ -43,9 +44,11 @@ if (isset($_GET['delete'])) {
           <td><?= htmlspecialchars($u['email']) ?></td>
           <td><?= $u['is_admin'] ? 'Yes' : 'No' ?></td>
           <td>
-            <a href="users_admin_details.php?Id=<?= $u['id'] ?>" class="btn btn-success btn-sm">Edit</a>
+            <a href="users_admin_details.php?Id=<?= $u['id'] ?>" class="btn btn-success btn-sm"><i class="bi bi-pen"></i>&nbsp;Edit</a>
+          </td>
+            <td>  
             <a href="?delete=<?= $u['id'] ?>" class="btn btn-danger btn-sm"
-              onclick="return confirm('Are you sure to delete this user?')">Delete</a>
+              onclick="return confirm('Are you sure to delete this user?')"><i class="bi bi-trash3"></i>&nbsp;Delete</a>
           </td>
         </tr>
       <?php endforeach; ?>

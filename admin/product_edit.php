@@ -13,7 +13,8 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 
 $id = (int) $_GET['id'];
 $p = [];
-$response = file_get_contents("http://localhost/ecommerce-goup3/api/products.php?id=$id");
+$response = file_get_contents(filename:"http://localhost/ecommerce-goup3/api/products.php?id=$id");
+
 if ($response) {
     $p = json_decode($response, true);
 }
@@ -25,7 +26,8 @@ if (!$p || isset($p['message'])) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
     $name = $_POST['name'];
-    $description = $_POST['description'];
+    $short_description = $_POST['short_description'];
+    $long_description = $_POST['long_description'];
     $price = $_POST['price'];
     $photo = $p['photo'];
 
@@ -44,7 +46,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
     $payload = json_encode([
         'id' => $id,
         'name' => $name,
-        'description' => $description,
+        'short_description' => $short_description,
+        'long_description' => $long_description,
         'price' => $price,
         'photo' => $photo
     ]);
@@ -54,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-    
+
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
@@ -78,9 +81,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
             <input name="name" required class="form-control" value="<?= htmlspecialchars($p['name']) ?>">
         </div>
         <div class="mb-3">
-            <label for="description" class="form-label">Description</label>
-            <textarea name="description" required
-                class="form-control"><?= htmlspecialchars($p['description']) ?></textarea>
+            <label for="short_description" class="form-label">Short description</label>
+            <textarea name="short_description" required
+                class="form-control"><?= htmlspecialchars($p['short_description']) ?></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="long_description" class="form-label">Long description</label>
+            <textarea name="long_description" required
+                class="form-control"><?= htmlspecialchars($p['long_description']) ?></textarea>
         </div>
         <div class="mb-3">
             <label for="price" class="form-label">Price</label>
@@ -96,8 +104,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
                 </div>
             <?php endif; ?>
         </div>
-        <button class="btn btn-primary" name="update">Update Product</button>
-        <a href="products_admin.php" class="btn btn-secondary">Cancel</a>
+        <button class="btn btn-primary" name="update"><i class="bi bi-arrow-clockwise"></i> &nbsp; Update Product</button>
+        <a href="products_admin.php" class="btn btn-secondary">Cancel &nbsp; <i class="bi bi-x-circle"></i></a>
     </form>
 </div>
 <?php include '../includes/footer.php'; ?>

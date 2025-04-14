@@ -14,7 +14,7 @@ if (isset($_GET['delete'])) {
   exit();
 }
 
-$limit = 10;
+$limit = 6;
 $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 
@@ -31,29 +31,42 @@ $total_pages = ceil($total / $limit);
 <?php include '../includes/header.php'; ?>
 <div class="container mt-4" style="min-height: 80vh;">
   <h2>Product Management</h2>
-  <a href="product_add.php" class="btn btn-success mb-3">+ Add Product</a>
+  <a href="product_add.php" class="btn btn-primary mb-3"><i class="bi bi-patch-plus"></i>&nbsp; Add Product</a>
 
   <h4 class="mt-4">All Products</h4>
   <table class="table table-bordered">
     <thead>
       <tr>
+        <th>Image</th>
         <th>Name</th>
-        <th>description</th>
+        <th>Short description</th>
+        <th>Long description</th>
         <th>Price</th>
-        <th style="width: 150px;">Action</th>
+        <th style="width: 150px;">Edit</th>
+        <th style="width: 150px;">Delete</th>
       </tr>
     </thead>
     <tbody>
       <?php foreach ($products as $p): ?>
         <tr>
+        <td><img src="../uploads/<?= htmlspecialchars($p['photo']) ?>" alt="<?= htmlspecialchars($p['name']) ?>" style="max-width: 100px; max-height: 100px;"></td>
           <td><?= htmlspecialchars($p['name']) ?></td>
-          <td><?= htmlspecialchars($p['description']) ?></td>
+          <td><?= htmlspecialchars($p['short_description']) ?></td>
+          <td><?= htmlspecialchars($p['long_description']) ?></td>
           <td>$<?= htmlspecialchars($p['price']) ?></td>
           <td>
-            <a href="product_edit.php?id=<?= $p['id'] ?>" class="btn btn-primary btn-sm">Edit</a>
-            <a href="?delete=<?= $p['id'] ?>" class="btn btn-danger btn-sm"
-              onclick="return confirm('Are you sure?')">Delete</a>
+            <a href="product_edit.php?id=<?= $p['id'] ?>" class="btn btn-success btn-sm"><i class="bi bi-pen"></i>&nbsp;Edit</a>
           </td>
+          <td>
+    <form action="product_delete.php" method="POST" onsubmit="return confirm('Are you sure you want to delete this product?');">
+        <input type="hidden" name="_method" value="DELETE">
+        <input type="hidden" name="id" value="<?= $p['id'] ?>">
+        <button type="submit" class="btn btn-danger btn-sm">
+            <i class="bi bi-trash3"></i>&nbsp;Delete
+        </button>
+    </form>
+</td>
+
         </tr>
       <?php endforeach; ?>
     </tbody>
@@ -61,7 +74,7 @@ $total_pages = ceil($total / $limit);
   <nav>
     <ul class="pagination justify-content-center mt-4">
       <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
-        <a class="page-link" href="?page=<?= $page - 1 ?>">Previous</a>
+        <a class="page-link" href="?page=<?= $page - 1 ?>"><i class="bi bi-arrow-left-circle"></i>&nbsp;Previous</a>
       </li>
       <?php for ($i = 1; $i <= $total_pages; $i++): ?>
         <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
@@ -69,7 +82,7 @@ $total_pages = ceil($total / $limit);
         </li>
       <?php endfor; ?>
       <li class="page-item <?= ($page >= $total_pages) ? 'disabled' : '' ?>">
-        <a class="page-link" href="?page=<?= $page + 1 ?>">Next</a>
+        <a class="page-link" href="?page=<?= $page + 1 ?>">Next &nbsp;<i class="bi bi-arrow-right-circle"></i></a>
       </li>
     </ul>
   </nav>

@@ -27,8 +27,8 @@ switch ($method) {
 
   case 'POST':
     $input = json_decode(file_get_contents("php://input"), true);
-    if (isset($input['name'], $input['description'], $input['price'])) {
-      $created = $product->createProduct($input['name'], $input['description'], $input['price'], $input['photo'] ?? '');
+    if (isset($input['name'], $input['short_description'], $input['long_description'], $input['price'])) {
+      $created = $product->createProduct($input['name'], $input['short_description'], $input['long_description'], $input['price'], $input['photo'] ?? '');
       echo json_encode(["success" => $created]);
     } else {
       http_response_code(400);
@@ -38,29 +38,19 @@ switch ($method) {
 
   case 'PUT':
     $input = json_decode(file_get_contents("php://input"), true);
-    if (!empty($input['id']) && !empty($input['name']) && isset($input['description'], $input['price'])) {
+    if (!empty($input['id']) && !empty($input['name']) && isset($input['short_description'], $input['long_description'], $input['price'])) {
       $updated = $product->updateProduct(
-        (int) $input['id'],
-        $input['name'],
-        $input['description'],
-        $input['price'],
-        $input['photo'] ?? ''
+        id: (int) $input['id'],
+        name: $input['name'],
+        short_description: $input['short_description'],
+        long_description: $input['long_description'],
+        price: $input['price'],
+        photo: $input['photo'] ?? ''
       );
-      echo json_encode(["success" => $updated]);
+      echo json_encode(value: ["success" => $updated]);
     } else {
       http_response_code(400);
       echo json_encode(["message" => "Missing fields for update"]);
-    }
-    break;
-
-  case 'DELETE':
-    parse_str(file_get_contents("php://input"), $input);
-    if (isset($input['id'])) {
-      $deleted = $product->deleteProduct((int) $input['id']);
-      echo json_encode(["success" => $deleted]);
-    } else {
-      http_response_code(400);
-      echo json_encode(["message" => "Missing ID for deletion"]);
     }
     break;
 
